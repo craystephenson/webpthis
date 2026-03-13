@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WEBPThis! – Free Image to WebP Converter</title>
+  <meta name="description" content="WEBPThis! Convert any image (PNG, JPEG, GIF, BMP) to WebP instantly in your browser. Free online WebP converter with quality control. No file uploads – your images never leave your device.">
+  <meta name="keywords" content="webp converter, png to webp, jpeg to webp, gif to webp, convert image to webp, webp converter online, free webp converter, image converter webp, webpthis">
+  <meta name="robots" content="index, follow">
+  <!-- Update href when deploying to your domain -->
+  <link rel="canonical" href="https://example.com/png-to-webp/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="WEBPThis! – Free Image to WebP Converter">
+  <meta property="og:description" content="Convert any image to WebP in your browser. Free, private, no uploads. PNG, JPEG, GIF, BMP supported.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "WEBPThis!",
+    "description": "Free online tool to convert any image (PNG, JPEG, GIF, BMP) to WebP format. Converts in your browser with no uploads – your files stay private.",
+    "applicationCategory": "UtilitiesApplication",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "operatingSystem": "Any",
+    "browserRequirements": "Requires JavaScript. Works in all modern browsers."
+  }
+  </script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      color: #e8e8e8;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .brand img {
+      height: 125px;
+      width: auto;
+    }
+    .subtitle {
+      color: #94a3b8;
+      margin-bottom: 32px;
+      font-size: 0.95rem;
+    }
+    .dropzone {
+      border: 2px dashed #475569;
+      border-radius: 12px;
+      padding: 48px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: rgba(30, 41, 59, 0.5);
+    }
+    .dropzone:hover, .dropzone.dragover {
+      border-color: #22c55e;
+      background: rgba(34, 197, 94, 0.08);
+    }
+    .dropzone p {
+      color: #94a3b8;
+      margin-top: 8px;
+    }
+    .dropzone input { display: none; }
+    .quality {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .quality label {
+      font-size: 0.9rem;
+      min-width: 80px;
+    }
+    .quality input[type="range"] {
+      flex: 1;
+      height: 6px;
+      -webkit-appearance: none;
+      background: #334155;
+      border-radius: 3px;
+    }
+    .quality input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #22c55e;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .quality .value { color: #22c55e; font-weight: 600; min-width: 36px; }
+    .results {
+      margin-top: 24px;
+      display: none;
+    }
+    .results.visible { display: block; }
+    .preview-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .preview-box {
+      flex: 1;
+      min-width: 140px;
+      background: rgba(30, 41, 59, 0.8);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+    .preview-box img {
+      max-width: 100%;
+      max-height: 240px;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+    .preview-box .label {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      margin-top: 8px;
+    }
+    .preview-box .size { font-size: 0.8rem; margin-top: 4px; }
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #22c55e;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 16px;
+    }
+    .btn:hover { background: #16a34a; }
+    .btn-secondary {
+      background: #475569;
+      margin-top: 0;
+    }
+    .btn-secondary:hover { background: #64748b; }
+    .btn:disabled {
+      background: #475569;
+      cursor: not-allowed;
+    }
+    .hint-text {
+      margin-top: 12px;
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+    .dropzone.has-image {
+      padding: 16px;
+    }
+    .dropzone.has-image p { margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <main>
+    <div class="brand">
+      <img src="logo.png" alt="WEBPThis!">
+    </div>
+    <p class="subtitle">Convert any image (PNG, JPEG, GIF, BMP) to WebP format online. Upload once, adjust quality, and download as many versions as you need. Your images never leave your device – conversion happens in your browser.</p>
+
+    <div class="dropzone" id="dropzone">
+      <input type="file" id="fileInput" accept="image/*">
+      <p id="dropzoneText"><strong>Drop any image here</strong> or click to browse</p>
+      <p id="dropzoneHint">Image stays until you upload a new one</p>
+    </div>
+
+    <div class="quality" id="qualitySection" style="display: none;">
+      <label>Quality</label>
+      <input type="range" id="quality" min="1" max="100" value="85">
+      <span class="value" id="qualityValue">85</span>
+      <button class="btn btn-secondary" id="regenBtn">Regenerate Preview</button>
+    </div>
+
+    <div class="results" id="results" style="display: none;">
+      <div class="preview-row">
+        <div class="preview-box">
+          <img id="previewImg" alt="WebP preview">
+          <div class="label" id="fileName">—</div>
+          <div class="size" id="sizeInfo">—</div>
+          <button class="btn" id="downloadBtn">Download WebP</button>
+        </div>
+      </div>
+      <p class="hint-text">Adjust quality, click Regenerate Preview to update, then download. Image stays until you upload a new one.</p>
+    </div>
+    </main>
+  </div>
+
+  <script>
+    const dropzone = document.getElementById('dropzone');
+    const dropzoneText = document.getElementById('dropzoneText');
+    const dropzoneHint = document.getElementById('dropzoneHint');
+    const fileInput = document.getElementById('fileInput');
+    const qualitySlider = document.getElementById('quality');
+    const qualityValue = document.getElementById('qualityValue');
+    const qualitySection = document.getElementById('qualitySection');
+    const results = document.getElementById('results');
+    const previewImg = document.getElementById('previewImg');
+    const fileName = document.getElementById('fileName');
+    const sizeInfo = document.getElementById('sizeInfo');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    let currentImage = null;  // { file }
+
+    qualitySlider.addEventListener('input', () => {
+      qualityValue.textContent = qualitySlider.value;
+    });
+
+    document.getElementById('regenBtn').addEventListener('click', async () => {
+      if (!currentImage) return;
+      const btn = document.getElementById('regenBtn');
+      btn.disabled = true;
+      btn.textContent = 'Converting…';
+      try {
+        await updatePreview();
+      } catch (err) {
+        console.error(err);
+        alert('Conversion failed: ' + err.message);
+      }
+      btn.disabled = false;
+      btn.textContent = 'Regenerate Preview';
+    });
+
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      handleFile(e.dataTransfer.files[0]);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files[0]) handleFile(e.target.files[0]);
+    });
+
+    async function handleFile(file) {
+      if (!file || !file.type.startsWith('image/')) {
+        alert('Please select an image file (PNG, JPEG, GIF, WebP, BMP, etc.).');
+        return;
+      }
+
+      currentImage = { file };
+
+      dropzone.classList.add('has-image');
+      dropzoneText.innerHTML = '<strong>' + file.name + '</strong>';
+      dropzoneHint.textContent = 'Drop a new image to replace';
+      qualitySection.style.display = 'flex';
+      results.style.display = 'block';
+
+      updatePreview();
+    }
+
+    async function updatePreview() {
+      if (!currentImage) return;
+      const quality = parseInt(qualitySlider.value) / 100;
+      const webpBlob = await convertToWebP(currentImage.file, quality);
+
+      // Use data URL for preview - guarantees fresh display each time (no blob URL caching)
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(webpBlob);
+      });
+      previewImg.src = dataUrl;
+
+      // Update stats
+      const originalSize = (currentImage.file.size / 1024).toFixed(1);
+      const webpSize = (webpBlob.size / 1024).toFixed(1);
+      const pct = ((1 - webpBlob.size / currentImage.file.size) * 100);
+      const savingsText = pct >= 0 ? `${pct.toFixed(0)}% smaller` : `${Math.abs(pct).toFixed(0)}% larger`;
+      fileName.textContent = currentImage.file.name.replace(/\.(png|jpe?g|gif|webp|bmp|avif)$/i, '');
+      sizeInfo.textContent = `${originalSize} KB → ${webpSize} KB (${savingsText})`;
+    }
+
+    function convertToWebP(file, quality) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          URL.revokeObjectURL(img.src);
+          canvas.toBlob(
+            (blob) => {
+              if (blob) resolve(blob);
+              else reject(new Error('WebP not supported in this browser. Try Chrome or Firefox.'));
+            },
+            'image/webp',
+            quality
+          );
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(img.src);
+          reject(new Error('Failed to load image'));
+        };
+        img.src = URL.createObjectURL(file);
+      });
+    }
+
+    downloadBtn.onclick = async () => {
+      if (!currentImage) return;
+      const quality = parseInt(qualitySlider.value) / 100;
+      const webpBlob = await convertToWebP(currentImage.file, quality);
+      const baseName = currentImage.file.name.replace(/\.(png|jpe?g|gif|webp|bmp|avif)$/i, '');
+      const q = qualitySlider.value;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(webpBlob);
+      a.download = `${baseName}-q${q}.webp`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    };
+  </script>
+</body>
+</html>
